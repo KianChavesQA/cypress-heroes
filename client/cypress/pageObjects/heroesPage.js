@@ -21,9 +21,12 @@ class HeroesPage {
     return selectors;
   }
 
+  //   Verificar se está na página de heróis
   verifyOnHeroesPage() {
     cy.url().should("include", "/heroes");
   }
+
+  //  Verifica se o primeiro herói possui fãs
   likeFirstHeroAndVerifyFansIncrease() {
     cy.get(this.selectorList().fans)
       .first()
@@ -38,6 +41,7 @@ class HeroesPage {
       });
   }
 
+  //  Verifica se o primeiro herói foi contratado
   hireFirstHeroAndVerifySavesIncrease() {
     cy.get('[data-cy="saves"]')
       .first()
@@ -105,43 +109,28 @@ class HeroesPage {
       .invoke("text")
       .then((text) => {
         heroFirst.name = String(text).trim();
-
         cy.get(selectors.createNewHeroButton).click();
         cy.get(selectors.nameInput).type(heroFirst.name);
       });
+
+    // Preenche os outros campos com valores padrão
     cy.get(selectors.fansInput).type(10);
     cy.get(selectors.savesInput).type(10);
     cy.get(selectors.priceInput).type(10);
+
+    // Seleciona um poder aleatório para o herói
     cy.get(selectors.powersSelect).then(($select) => {
       const options = $select.find("option");
       const randomIndex = Math.floor(Math.random() * options.length);
       const randomValue = options.eq(randomIndex).val();
       cy.wrap($select).select(randomValue);
     });
+    // Seleciona um arquivo de avatar para o herói
     cy.get(selectors.avatarInput).selectFile("cypress/fixtures/avatar.jpg");
     cy.get("button").contains("Submit").click();
+
+    // Verifica se a mensagem de erro é exibida
     cy.contains("Já existe um heró com esse nome").should("exist");
-  }
-
-  saveFirstHero() {
-    const selectors = this.selectorList();
-
-    // Objeto para armazenar valores antes da edição
-    const heroBefore = {};
-
-    // Captura todos os valores iniciais
-    cy.get(selectors.nameInput)
-      .invoke("text")
-      .then((text) => (heroBefore.name = text));
-    cy.get(selectors.priceInput)
-      .invoke("text")
-      .then((text) => (heroBefore.price = text));
-    cy.get(selectors.fansInput)
-      .invoke("text")
-      .then((text) => (heroBefore.fans = text));
-    cy.get(selectors.savesInput)
-      .invoke("text")
-      .then((text) => (heroBefore.saves = text));
   }
 }
 
