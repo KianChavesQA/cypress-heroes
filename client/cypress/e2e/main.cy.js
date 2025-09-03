@@ -60,6 +60,7 @@ describe("Heroes App E2E Tests", () => {
     loginPage.login(userData.userAdmin.email, userData.userAdmin.password);
     heroesPage.checkAdminPrivileges();
     heroesPage.clickDeleteLastHero();
+    heroesPage.checkDeletedMessage();
   });
   it("TC-ADMIN-006: Criar um novo hero com usuário admin", () => {
     loginPage.login(userData.userAdmin.email, userData.userAdmin.password);
@@ -71,5 +72,11 @@ describe("Heroes App E2E Tests", () => {
       chance.integer({ min: 1, max: 100 }),
       chance.integer({ min: 1, max: 100 })
     );
+  });
+
+  it("TC-ADMIN-007: Não permitir criação de Hero com nome duplicado", () => {
+    loginPage.login(userData.userAdmin.email, userData.userAdmin.password);
+    heroesPage.checkAdminPrivileges();
+    heroesPage.createNewHeroWithSameFirstHeroName();
   });
 });
